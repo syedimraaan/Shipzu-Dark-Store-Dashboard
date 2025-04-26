@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipzu Dark Store Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        /* Custom styles for the dashboard structure */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .dashboard-container {
+            margin: 2rem;
+            padding: 2rem;
+            background-color: #f7fafc; /* Light background */
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .kpi-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Space out content vertically */
+            height: 100%; /* Ensure cards are of equal height */
+        }
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a202c; /* Dark text */
+        }
+        .kpi-label {
+            font-size: 1rem;
+            color: #718096; /* Gray text */
+            margin-bottom: 0.5rem;
+        }
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: #38a169; /* Green for positive trend */
+        }
+        .kpi-trend.down {
+            color: #e53e3e; /* Red for negative trend */
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+        }
+        .visualization-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            height: 300px; /* Increased height for visualizations */
+            display: flex;
+            align-items: center; /* Vertically center content */
+            justify-content: center; /* Horizontally center content */
+        }
+        .visualization-placeholder {
+            width: 100%;
+            height: 100%;
+            border: 1px dashed #a0aec0; /* Dashed border for placeholder */
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+            font-size: 1.25rem;
+        }
+        .export-options {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1rem;
+        }
+        .export-button {
+            background-color: #4a5568; /* Dark gray button */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .export-button:hover {
+            background-color: #2d3748; /* Darker gray on hover */
+        }
+        .filter-section {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .filter-label {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+        .filter-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .new-dashboard-button {
+            background-color: #63b3ed; /* Blue button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+        .new-dashboard-button:hover {
+            background-color: #3182ce; /* Darker blue on hover */
+        }
+
+        /* Private Label Styling */
+        .private-label-settings {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .private-label-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 1rem;
+        }
+
+        .private-label-field {
+            margin-bottom: 1rem;
+        }
+
+        .private-label-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #718096;
+            margin-bottom: 0.25rem;
+        }
+
+        .private-label-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .private-label-color {
+            width: 100%;
+            height: 2.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            padding: 0.25rem;
+        }
+
+        .private-label-button {
+            background-color: #68d391; /* Green button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .private-label-button:hover {
+            background-color: #48bb78; /* Darker green on hover */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="dashboard-container">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-4">Shipzu Dark Store Performance Dashboard</h1>
+
+        <div class="export-options">
+            <button class="export-button">Export Data</button>
+        </div>
+
+        <div class="filter-section">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="date-range" class="filter-label">Date Range</label>
+                    <select id="date-range" class="filter-select">
+                        <option>Last 7 Days</option>
+                        <option>Last 30 Days</option>
+                        <option>This Month</option>
+                        <option>Last Month</option>
+                        <option>Custom Range</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="dark-store" class="filter-label">Dark Store</label>
+                    <select id="dark-store" class="filter-select">
+                        <option>All Stores</option>
+                        <option>Store A</option>
+                        <option>Store B</option>
+                        <option>Store C</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="product-category" class="filter-label">Product Category</label>
+                    <select id="product-category" class="filter-select">
+                        <option>All Categories</option>
+                        <option>Groceries</option>
+                        <option>Electronics</option>
+                        <option>Home Goods</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <div class="kpi-card">
+                <div class="kpi-label">Order Fulfillment Rate</div>
+                <div class="kpi-value" id="order-fulfillment-rate">95%</div>
+                <div class="kpi-trend" id="order-fulfillment-trend">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M10 18c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-8a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3.707-3.707a1 1 0 0 0-1.414-1.414L10 8.586 7.707 6.293a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3z" clip-rule="evenodd" />
+                    </svg>
+                    <span>+2.5% (vs last week)</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Avg. Order Processing Time</div>
+                <div class="kpi-value" id="order-processing-time">6 min</div>
+                <div class="kpi-trend" id="order-processing-trend">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM8.707 11.707a1 1 0 0 1-1.414-1.414L8 10.586l-1.293-1.293a1 1 0 0 1-1.414 1.414l2 2a1 1 0 0 1 1.414 0l2-2a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <span>-1 min (vs last week)</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Inventory Accuracy</div>
+                <div class="kpi-value" id="inventory-accuracy">98%</div>
+                <div class="kpi-trend" id="inventory-accuracy-trend">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M10 18c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-8a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3.707-3.707a1 1 0 0 0-1.414-1.414L10 8.586 7.707 6.293a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3z" clip-rule="evenodd" />
+                    </svg>
+                    <span>+0.5% (vs last week)</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Customer Satisfaction</div>
+                <div class="kpi-value" id="customer-satisfaction">92%</div>
+                <div class="kpi-trend" id="customer-satisfaction-trend">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M10 18c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-8a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3.707-3.707a1 1 0 0 0-1.414-1.414L10 8.586 7.707 6.293a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3z" clip-rule="evenodd" />
+                    </svg>
+                    <span>+1% (vs last week)</span>
+                </div>
+            </div>
+             <div class="kpi-card">
+                <div class="kpi-label">Delivery Success Rate</div>
+                <div class="kpi-value" id="delivery-success-rate">96%</div>
+                <div class="kpi-trend" id="delivery-success-trend">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M10 18c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8zm0-8a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm3.707-3.707a1 1 0 0 0-1.414-1.414L10 8.586 7.707 6.293a1 1 0 0 0-1.414 1.414l3 3a1 1 0 0 0 1.414 0l3-3z" clip-rule="evenodd" />
+                    </svg>
+                    <span>+0.8% (vs last week)</span>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Order and Product Insights</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="visualization-card" >
+                <div class="visualization-placeholder" id="order-volume-revenue-chart">Order Volume and Revenue Trends</div>
+            </div>
+            <div class="visualization-card">
+                <div class="visualization-placeholder" id="product-performance-chart">Product Performance</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="visualization-card">
+                <div class="visualization-placeholder" id="order-value-distribution-chart">Order Value Distribution</div>
+            </div>
+            <div class="visualization-card">
+                <div class="visualization-placeholder" id="fulfillment-cycle-time-chart">Fulfillment Cycle Time</div>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+             <div class="visualization-card">
+                <div class="visualization-placeholder" id="inventory-turnover-chart">Inventory Turnover Rate</div>
+            </div>
+            <div class="visualization-card">
+                <div class="visualization-placeholder" id="cac-cltv-chart">CAC vs CLTV</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Operational Data</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="visualization-card">
+                <div class="visualization-placeholder" id="real-time-order-status">Real-time Order Status</div>
+            </div>
+            <div class="visualization-card">
+                <div class="visualization-placeholder" id="inventory-levels">Inventory Levels</div>
+            </div>
+             <div class="visualization-card">
+                <div class="visualization-placeholder" id="delivery-performance">Delivery Performance</div>
+            </div>
+        </div>
+
+        <div class="private-label-settings">
+            <h2 class="private-label-title">Private Label Settings</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="private-label-field">
+                    <label for="brand-name" class="private-label-label">Brand Name</label>
+                    <input type="text" id="brand-name" class="private-label-input" placeholder="Your Brand Name">
+                </div>
+                <div class="private-label-field">
+                    <label for="logo-url" class="private-label-label">Logo URL</label>
+                    <input type="text" id="logo-url" class="private-label-input" placeholder="URL of your logo">
+                </div>
+                <div class="private-label-field">
+                    <label for="primary-color" class="private-label-label">Primary Color</label>
+                    <input type="color" id="primary-color" class="private-label-color" value="#63b3ed">
+                </div>
+                <div class="private-label-field">
+                    <label for="secondary-color" class="private-label-label">Secondary Color</label>
+                    <input type="color" id="secondary-color" class="private-label-color" value="#4a5568">
+                </div>
+            </div>
+            <button class="private-label-button" id="apply-branding">Apply Branding</button>
+        </div>
+
+        <a href="#" class="new-dashboard-button">Create New Dashboard</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Basic interactivity for demonstration purposes
+        const exportButton = document.querySelector('.export-button');
+        exportButton.addEventListener('click', () => {
+            alert('Data exported!'); // Replace with actual export logic
+        });
+
+        const dateRangeSelect = document.getElementById('date-range');
+        dateRangeSelect.addEventListener('change', (event) => {
+            console.log('Date range selected:', event.target.value);
+            // Add logic to update dashboard data based on selected range
+            updateDashboardData(); // Call function to update data
+        });
+
+        const darkStoreSelect = document.getElementById('dark-store');
+        darkStoreSelect.addEventListener('change', (event) => {
+            console.log('Dark store selected:', event.target.value);
+            // Add logic to filter dashboard data by store
+            updateDashboardData(); // Call function to update data
+        });
+
+        const productCategorySelect = document.getElementById('product-category');
+        productCategorySelect.addEventListener('change', (event) => {
+            console.log('Product category selected:', event.target.value);
+            // Add logic to filter dashboard data by category
+            updateDashboardData(); // Call function to update data
+        });
+
+
+
+        // Function to update KPI values - Replace with actual data fetching
+        function updateKpis(data) {
+            document.getElementById('order-fulfillment-rate').textContent = data.orderFulfillmentRate + '%';
+            document.getElementById('order-fulfillment-trend').textContent = data.orderFulfillmentTrend;
+
+            document.getElementById('order-processing-time').textContent = data.orderProcessingTime + ' min';
+            document.getElementById('order-processing-trend').textContent = data.orderProcessingTrend;
+
+            document.getElementById('inventory-accuracy').textContent = data.inventoryAccuracy + '%';
+            document.getElementById('inventory-accuracy-trend').textContent = data.inventoryAccuracyTrend;
+
+            document.getElementById('customer-satisfaction').textContent = data.customerSatisfaction + '%';
+            document.getElementById('customer-satisfaction-trend').textContent = data.customerSatisfactionTrend;
+
+            document.getElementById('delivery-success-rate').textContent = data.deliverySuccessRate + '%';
+            document.getElementById('delivery-success-trend').textContent = data.deliverySuccessTrend;
+        }
+
+
+
+        // Sample data for demonstration - Replace with your actual data source
+        const sampleDashboardData = {
+            orderFulfillmentRate: 95,
+            orderFulfillmentTrend: '+2.5% (vs last week)',
+            orderProcessingTime: 6,
+            orderProcessingTrend: '-1 min (vs last week)',
+            inventoryAccuracy: 98,
+            inventoryAccuracyTrend: '+0.5% (vs last week)',
+            customerSatisfaction: 92,
+            customerSatisfactionTrend: '+1% (vs last week)',
+            deliverySuccessRate: 96,
+            deliverySuccessTrend: '+0.8% (vs last week)',
+            orderVolume: [100, 120, 150, 130, 160, 140, 180], // Daily order volume
+            revenue: [2000, 2400, 3000, 2600, 3200, 2800, 3600], // Daily revenue
+            productSales: [
+                { product: 'Product A', sales: 200 },
+                { product: 'Product B', sales: 150 },
+                { product: 'Product C', sales: 300 },
+                { product: 'Product D', sales: 250 },
+                { product: 'Product E', sales: 180 },
+            ],
+            orderValues: [50, 75, 100, 60, 80, 120, 90, 110, 40, 55, 70, 85], // Order values
+            fulfillmentTimes: [
+                { order: 'Order 1', picking: 2, packing: 1, labeling: 0.5 },
+                { order: 'Order 2', picking: 3, packing: 1.5, labeling: 0.75 },
+                { order: 'Order 3', picking: 1.5, packing: 1, labeling: 0.25 },
+                { order: 'Order 4', picking: 2.5, packing: 1.25, labeling: 0.5 },
+                { order: 'Order 5', picking: 4, packing: 2, labeling: 1 },
+           
